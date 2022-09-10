@@ -84,16 +84,17 @@ class PointHistoryClassifier(object):
 
         Returns
         -------
-        result_index: np.ndarray
-            float32[N]
+        max_indices: np.ndarray
+            int64[N]
             Index of Finger gesture
         """
-        result = self.onnx_session.run(
+        results = self.onnx_session.run(
             self.output_names,
             {input_name: point_history for input_name in self.input_names},
-        )[0]
-        result_index = np.argmax(result, axis=1, keepdims=False)
-        invalid_idx = result_index[..., 0:1] < self.score_th
-        result_index[invalid_idx] = self.invalid_value
+        )
+        max_scores, max_indices = results
+        # result_index = np.argmax(result, axis=1, keepdims=False)
+        invalid_idxs = max_scores < self.score_th
+        max_indices[invalid_idxs] = self.invalid_value
 
-        return result_index
+        return max_indices

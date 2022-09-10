@@ -63,6 +63,13 @@ def get_args():
         type=int,
         default=0.5,
     )
+    parser.add_argument(
+        '-dif',
+        '--disable_image_flip',
+        help='disable image flip',
+        action='store_true',
+    )
+
 
     args = parser.parse_args()
 
@@ -158,7 +165,7 @@ def main():
         ret, image = cap.read()
         if not ret:
             break
-        image = cv.flip(image, 1)  # ミラー表示
+        image = image if args.disable_image_flip else cv.flip(image, 1) # ミラー表示
         debug_image = copy.deepcopy(image)
 
         # 検出実施 #############################################################
@@ -229,6 +236,7 @@ def main():
                 # [boxcount, rcx, rcy, x1, y1, x2, y2, height, degree]
                 not_rotate_rects.append([rcx, rcy, x1, y1, x2, y2, 0])
                 # 検出枠のサイズ WxH
+                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (128,128,128), 2, cv.LINE_AA)
                 cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,128,255), 1, cv.LINE_AA)
                 # 検出枠の描画
                 cv.rectangle(debug_image, (x1,y1), (x2,y2), (0,128,255), 2, cv.LINE_AA)
@@ -251,9 +259,9 @@ def main():
                 # Draw
                 pre_processed_landmark_list = []
                 pre_processed_point_history_list = []
-                for hand_idx, (landmark, rotated_image_size_leftright) in enumerate(zip(hand_landmarks, rotated_image_size_leftrights)):
+                for hand_idx, (landmark, rotated_image_size_leftright, not_rotate_rect) in enumerate(zip(hand_landmarks, rotated_image_size_leftrights, not_rotate_rects)):
 
-                    rotated_image_width, rotated_image_height, left_hand_0_or_right_hand_1 = rotated_image_size_leftright
+                    rotated_image_width, _, left_hand_0_or_right_hand_1 = rotated_image_size_leftright
                     thick_coef = rotated_image_width / 400
                     lines = np.asarray(
                         [
@@ -270,7 +278,15 @@ def main():
                         cv.LINE_AA,
                     )
                     _ = [cv.circle(debug_image, (int(x), int(y)), radius, (0,128,255), -1) for x,y in landmark[:,:2]]
-                    handedness = 'Left' if left_hand_0_or_right_hand_1 == 0 else 'Right'
+                    left_hand_0_or_right_hand_1 = left_hand_0_or_right_hand_1 if args.disable_image_flip else (1 - left_hand_0_or_right_hand_1)
+                    handedness = 'Left ' if left_hand_0_or_right_hand_1 == 0 else 'Right'
+                    _, _, x1, y1, _, _, _ = not_rotate_rect
+                    text_x = max(x1, 10)
+                    text_x = min(text_x, cap_width-120)
+                    text_y = max(y1-40, 20)
+                    text_y = min(text_y, cap_height-20)
+                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (128,128,128), 2, cv.LINE_AA)
+                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,128,255), 1, cv.LINE_AA)
 
                     # 相対座標・正規化座標への変換
                     """
@@ -324,7 +340,7 @@ def main():
                     finger_gesture_ids = point_history_classifier(
                         pre_processed_point_history_list,
                     )
-                    print(f'finger_gesture_ids.shape: {finger_gesture_ids.shape}')
+                    # print(f'finger_gesture_ids.shape: {finger_gesture_ids.shape}')
 
                 # 直近検出の中で最多のジェスチャーIDを算出
                 for hand_idx, finger_gesture_id in enumerate(finger_gesture_ids):
@@ -332,7 +348,7 @@ def main():
                     finger_gesture_history.setdefault(str(hand_idx), deque(maxlen=history_length))
                     finger_gesture_history[hand_idx_str].append(int(finger_gesture_id))
                     most_common_fg_id = Counter(finger_gesture_history[hand_idx_str]).most_common()
-                    # print(f'hand_idx: {hand_idx} point_history_classifier_labels: {point_history_classifier_labels[most_common_fg_id[0][0]]}')
+                    print(f'hand_idx: {hand_idx} point_history_classifier_labels: {point_history_classifier_labels[most_common_fg_id[0][0]]}')
 
                     # # 描画
                     # debug_image = draw_info_text(

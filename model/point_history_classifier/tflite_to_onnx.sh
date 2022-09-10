@@ -36,19 +36,11 @@ sor4onnx \
 --mode outputs \
 --output_onnx_file_path point_history_classifier.onnx
 
-sog4onnx \
--ot ReduceMax \
--os 11 \
--on sog_ReduceMax \
--iv reducemax_input float32 [\'batch\',${CLASSES}] \
--ov scores float32 [\'batch\'] \
--a axes int64 [1] \
--a keepdims int64 0 \
--of ReduceMax.onnx
+python make_argmax.py --classes ${CLASSES}
 
 snc4onnx \
--if point_history_classifier.onnx ReduceMax.onnx \
+-if point_history_classifier.onnx argmax.onnx \
 -of point_history_classifier.onnx \
--sd base_scores reducemax_input
+-sd base_scores argmax_input
 
-rm ReduceMax.onnx
+rm argmax.onnx
