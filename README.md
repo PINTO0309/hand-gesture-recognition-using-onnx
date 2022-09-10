@@ -1,7 +1,7 @@
-[Japanese/[English](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/README_EN.md)]
+[Japanese/[English](https://github.com/Kazuhito00/hand-gesture-recognition-using-onnx/blob/main/README_EN.md)]
 
 ---
-# hand-gesture-recognition-using-mediapipe
+# hand-gesture-recognition-using-onnx
 MediaPipe(Python版)を用いて手の姿勢推定を行い、検出したキーポイントを用いて、<br>簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 ![mqlrf-s6x16](https://user-images.githubusercontent.com/37477845/102222442-c452cd00-3f26-11eb-93ec-c387c98231be.gif)
 
@@ -13,7 +13,6 @@ MediaPipe(Python版)を用いて手の姿勢推定を行い、検出したキー
 * フィンガージェスチャー認識用学習データ、および、学習用ノートブック
 
 # Requirements
-* mediapipe 0.8.1
 * OpenCV 3.4.2 or Later
 * Tensorflow 2.3.0 or Later<br>tf-nightly 2.5.0.dev or later (LSTMモデルのTFLiteを作成する場合のみ)
 * scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
