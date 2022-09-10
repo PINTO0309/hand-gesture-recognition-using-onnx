@@ -1,7 +1,7 @@
 [Japanese/[English](https://github.com/Kazuhito00/hand-gesture-recognition-using-onnx/blob/main/README_EN.md)]
 
 ---
-# hand-gesture-recognition-using-onnx
+# [WIP] hand-gesture-recognition-using-onnx
 簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 ![mqlrf-s6x16](https://user-images.githubusercontent.com/37477845/102222442-c452cd00-3f26-11eb-93ec-c387c98231be.gif)
 
