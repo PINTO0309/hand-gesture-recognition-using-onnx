@@ -2,19 +2,20 @@
 
 ---
 # hand-gesture-recognition-using-onnx
-MediaPipe(Python版)を用いて手の姿勢推定を行い、検出したキーポイントを用いて、<br>簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
+簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 ![mqlrf-s6x16](https://user-images.githubusercontent.com/37477845/102222442-c452cd00-3f26-11eb-93ec-c387c98231be.gif)
 
 本リポジトリは以下の内容を含みます。
 * サンプルプログラム
-* ハンドサイン認識モデル(TFLite)
-* フィンガージェスチャー認識モデル(TFLite)
+* ハンドサイン認識モデル(ONNX)
+* フィンガージェスチャー認識モデル(ONNX)
 * ハンドサイン認識用学習データ、および、学習用ノートブック
 * フィンガージェスチャー認識用学習データ、および、学習用ノートブック
 
 # Requirements
+* onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
 * OpenCV 3.4.2 or Later
-* Tensorflow 2.3.0 or Later<br>tf-nightly 2.5.0.dev or later (LSTMモデルのTFLiteを作成する場合のみ)
+* Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
 * scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
 * matplotlib 3.3.2 or Later (学習時に混同行列を表示したい場合のみ)
 
