@@ -6,18 +6,21 @@
 ![mqlrf-s6x16](https://user-images.githubusercontent.com/37477845/102222442-c452cd00-3f26-11eb-93ec-c387c98231be.gif)
 
 本リポジトリは以下の内容を含みます。
-* サンプルプログラム
-* ハンドサイン認識モデル(ONNX)
-* フィンガージェスチャー認識モデル(ONNX)
-* ハンドサイン認識用学習データ、および、学習用ノートブック
-* フィンガージェスチャー認識用学習データ、および、学習用ノートブック
+- サンプルプログラム
+- ハンドディテクションモデル(ONNX)
+- パルムランドマークディテクションモデル(ONNX)
+- ハンドサイン認識モデル(ONNX)
+- フィンガージェスチャー認識モデル(ONNX)
+- ハンドサイン認識用学習データ、および、学習用ノートブック
+- フィンガージェスチャー認識用学習データ、および、学習用ノートブック
 
 # Requirements
-* onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
-* OpenCV 3.4.2 or Later
-* Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
-* scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
-* matplotlib 3.3.2 or Later (学習時に混同行列を表示したい場合のみ)
+- onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
+- OpenCV 3.4.2 or Later
+- Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
+- scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
+- matplotlib 3.3.2 or Later (学習時に混同行列を表示したい場合のみ)
+- simple-onnx-processing-tools
 
 # Demo
 Webカメラを使ったデモの実行方法は以下です。
@@ -27,8 +30,8 @@ python app.py
 
 デモ実行時には、以下のオプションが指定可能です。
 * --device<br>カメラデバイス番号の指定 (デフォルト：0)
-* --width<br>カメラキャプチャ時の横幅 (デフォルト：960)
-* --height<br>カメラキャプチャ時の縦幅 (デフォルト：540)
+* --width<br>カメラキャプチャ時の横幅 (デフォルト：640)
+* --height<br>カメラキャプチャ時の縦幅 (デフォルト：480)
 * --use_static_image_mode<br>MediaPipeの推論にstatic_image_modeを利用するか否か (デフォルト：未指定)
 * --min_detection_confidence<br>
 検出信頼値の閾値 (デフォルト：0.5)
@@ -72,18 +75,18 @@ python app.py
 ### model/keypoint_classifier
 ハンドサイン認識に関わるファイルを格納するディレクトリです。<br>
 以下のファイルが格納されます。
-* 学習用データ(keypoint.csv)
-* 学習済モデル(keypoint_classifier.tflite)
-* ラベルデータ(keypoint_classifier_label.csv)
-* 推論用クラス(keypoint_classifier.py)
+- 学習用データ(keypoint.csv)
+- 学習済モデル(keypoint_classifier.tflite)
+- ラベルデータ(keypoint_classifier_label.csv)
+- 推論用クラス(keypoint_classifier.py)
 
 ### model/point_history_classifier
 フィンガージェスチャー認識に関わるファイルを格納するディレクトリです。<br>
 以下のファイルが格納されます。
-* 学習用データ(point_history.csv)
-* 学習済モデル(point_history_classifier.tflite)
-* ラベルデータ(point_history_classifier_label.csv)
-* 推論用クラス(point_history_classifier.py)
+- 学習用データ(point_history.csv)
+- 学習済モデル(point_history_classifier.tflite)
+- ラベルデータ(point_history_classifier_label.csv)
+- 推論用クラス(point_history_classifier.py)
 
 ### utils/cvfpscalc.py
 FPS計測用のモジュールです。
@@ -137,16 +140,15 @@ FPS計測用のモジュールです。
 <img src="https://user-images.githubusercontent.com/37477845/102246817-8368b180-3f42-11eb-9851-23a7b12467aa.png" width="60%">
 
 # Application example
-以下に応用事例を紹介します。
-* [Control DJI Tello drone with Hand gestures](https://towardsdatascience.com/control-dji-tello-drone-with-hand-gestures-b76bd1d4644f)
-* [Classifying American Sign Language Alphabets on the OAK-D](https://www.cortic.ca/post/classifying-american-sign-language-alphabets-on-the-oak-d)
+- None
 
 # Reference
-* [MediaPipe](https://mediapipe.dev/)
-* [Kazuhito00/mediapipe-python-sample](https://github.com/Kazuhito00/mediapipe-python-sample)
+- [Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
 
 # Author
-高橋かずひと(https://twitter.com/KzhtTkhs)
+- hand-gesture-recognition-using-mediapipe: 高橋かずひと(https://twitter.com/KzhtTkhs)
+- hand-gesture-recognition-using-onnx: Katsuya Hyodo
 
 # License
-hand-gesture-recognition-using-mediapipe is under [Apache v2 license](LICENSE).
+- hand-gesture-recognition-using-mediapipe is under [Apache v2 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
+- hand-gesture-recognition-using-onnx is under [Apache v2 license](LICENSE).
