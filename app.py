@@ -4,6 +4,7 @@ import csv
 import copy
 import argparse
 import itertools
+from typing import List
 from math import degrees
 from collections import Counter
 from collections import deque
@@ -136,7 +137,9 @@ def main():
     point_history = deque(maxlen=history_length)
 
     # フィンガージェスチャー履歴 ################################################
-    finger_gesture_history = deque(maxlen=history_length)
+    # finger_gesture_history = {deque(maxlen=history_length)}
+    finger_gesture_history = {}
+    finger_gesture_history.setdefault('0', deque(maxlen=history_length))
 
     #  ########################################################################
     mode = 0
@@ -155,6 +158,7 @@ def main():
         ret, image = cap.read()
         if not ret:
             break
+        image = cv.flip(image, 1)  # ミラー表示
         debug_image = copy.deepcopy(image)
 
         # 検出実施 #############################################################
@@ -167,6 +171,7 @@ def main():
         # hand: sqn_rr_size, rotation, sqn_rr_center_x, sqn_rr_center_y
 
         rects = []
+        not_rotate_rects = []
         rects_tuple = None
         cropted_rotated_hands_images = []
 
@@ -190,7 +195,7 @@ def main():
                 ymin = max(0, ymin)
                 ymax = min(cap_height, ymax)
                 degree = degrees(rotation)
-                # [boxcount, cx, cy, width, height, angle]
+                # [boxcount, cx, cy, width, height, degree]
                 rects.append([cx, cy, (xmax-xmin), (ymax-ymin), degree])
 
             rects = np.asarray(rects, dtype=np.float32)
@@ -201,13 +206,14 @@ def main():
                 operation_when_cropping_out_of_range='padding',
             )
 
-            ###### debug
+            # Debug ===============================================================
             for rect in rects:
+                # 回転考慮の領域の描画, 赤色の枠
                 rects_tuple = ((rect[0], rect[1]), (rect[2], rect[3]), rect[4])
                 box = cv.boxPoints(rects_tuple).astype(np.int0)
                 cv.drawContours(debug_image, [box], 0,(0,0,255), 2, cv.LINE_AA)
 
-                # クロップ前・回転非考慮の領域の描画, オレンジ色の枠
+                # 回転非考慮の領域の描画, オレンジ色の枠
                 rcx = int(rect[0])
                 rcy = int(rect[1])
                 half_w = int(rect[2] // 2)
@@ -220,10 +226,15 @@ def main():
                 text_x = min(text_x, cap_width-120)
                 text_y = max(y1-15, 20)
                 text_y = min(text_y, cap_height-20)
+                # [boxcount, rcx, rcy, x1, y1, x2, y2, height, degree]
+                not_rotate_rects.append([rcx, rcy, x1, y1, x2, y2, 0])
+                # 検出枠のサイズ WxH
                 cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,128,255), 1, cv.LINE_AA)
+                # 検出枠の描画
                 cv.rectangle(debug_image, (x1,y1), (x2,y2), (0,128,255), 2, cv.LINE_AA)
-                # 検出領域の中心座標
+                # 検出領域の中心座標描画
                 cv.circle(debug_image, (rcx, rcy), 3, (0, 255, 255), -1)
+                # Debug ===============================================================
 
         image.flags.writeable = True
 
@@ -240,7 +251,7 @@ def main():
                 # Draw
                 pre_processed_landmark_list = []
                 pre_processed_point_history_list = []
-                for landmark, rotated_image_size_leftright in zip(hand_landmarks, rotated_image_size_leftrights):
+                for hand_idx, (landmark, rotated_image_size_leftright) in enumerate(zip(hand_landmarks, rotated_image_size_leftrights)):
 
                     rotated_image_width, rotated_image_height, left_hand_0_or_right_hand_1 = rotated_image_size_leftright
                     thick_coef = rotated_image_width / 400
@@ -263,7 +274,7 @@ def main():
 
                     # 相対座標・正規化座標への変換
                     """
-                    pre_processed_landmark: np.ndarray [42]
+                    pre_processed_landmark: np.ndarray [42], [x,y]x21
                     """
                     pre_processed_landmark = pre_process_landmark(
                         landmark,
@@ -280,18 +291,21 @@ def main():
                     logging_csv(
                         number,
                         mode,
+                        hand_idx,
                         pre_processed_landmark,
                         pre_processed_point_history,
                     )
+
+                # print(f'len(pre_processed_point_history_list): {len(pre_processed_point_history_list)}')
 
                 # ハンドサイン分類 - バッチ処理
                 hand_sign_ids = keypoint_classifier(
                     np.asarray(pre_processed_landmark_list, dtype=np.float32)
                 )
-                print(f'hand_sign_ids: {hand_sign_ids}')
-                for landmark, hand_sign_id in zip(hand_landmarks, hand_sign_ids):
+                for hand_idx, (landmark, hand_sign_id) in enumerate(zip(hand_landmarks, hand_sign_ids)):
                     if hand_sign_id == 2:  # 指差しサイン
                         point_history.append(landmark[8]) # 人差指座標
+                        # print(f'hand_idx: {hand_idx} keypoint_classifier_labels: {keypoint_classifier_labels[hand_sign_id]}')
                     else:
                         point_history.append([0, 0])
 
@@ -299,17 +313,26 @@ def main():
                 # フィンガージェスチャー分類 - バッチ処理
                 finger_gesture_ids = []
                 pre_processed_point_history_list = np.asarray(pre_processed_point_history_list, dtype=np.float32)
+                """
+                hands = 2
+                pre_processed_point_history_list.shape: (2, 32)
+                """
+                print(f'pre_processed_point_history_list.shape: {pre_processed_point_history_list.shape}')
                 point_history_len = pre_processed_point_history_list.size
-                if point_history_len == (history_length * 2):
+                # print(f'point_history_len: {point_history_len}')
+                if point_history_len % (history_length * 2) == 0:
                     finger_gesture_ids = point_history_classifier(
                         pre_processed_point_history_list,
                     )
-                    print(f'finger_gesture_id: {finger_gesture_ids}')
+                    print(f'finger_gesture_ids.shape: {finger_gesture_ids.shape}')
 
                 # 直近検出の中で最多のジェスチャーIDを算出
-                for finger_gesture_id in finger_gesture_ids:
-                    finger_gesture_history.append(int(finger_gesture_id))
-                    most_common_fg_id = Counter(finger_gesture_history).most_common()
+                for hand_idx, finger_gesture_id in enumerate(finger_gesture_ids):
+                    hand_idx_str = str(hand_idx)
+                    finger_gesture_history.setdefault(str(hand_idx), deque(maxlen=history_length))
+                    finger_gesture_history[hand_idx_str].append(int(finger_gesture_id))
+                    most_common_fg_id = Counter(finger_gesture_history[hand_idx_str]).most_common()
+                    # print(f'hand_idx: {hand_idx} point_history_classifier_labels: {point_history_classifier_labels[most_common_fg_id[0][0]]}')
 
                     # # 描画
                     # debug_image = draw_info_text(
@@ -319,6 +342,8 @@ def main():
                     #     keypoint_classifier_labels[hand_sign_id],
                     #     point_history_classifier_labels[most_common_fg_id[0][0]],
                     # )
+            else:
+                point_history.append([0, 0])
 
         else:
             point_history.append([0, 0])
@@ -435,19 +460,19 @@ def pre_process_point_history(image_width, image_height, point_history):
     return temp_point_history
 
 
-def logging_csv(number, mode, landmark_list, point_history_list):
+def logging_csv(number, mode, hand_idx, landmark_list, point_history_list):
     if mode == 0:
         pass
     if mode == 1 and (0 <= number <= 9):
         csv_path = 'model/keypoint_classifier/keypoint.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([number, *landmark_list])
+            writer.writerow([number, hand_idx, *landmark_list])
     if mode == 2 and (0 <= number <= 9):
         csv_path = 'model/point_history_classifier/point_history.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([number, *point_history_list])
+            writer.writerow([number, hand_idx, *point_history_list])
     return
 
 
