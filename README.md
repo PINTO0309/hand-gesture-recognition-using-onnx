@@ -17,7 +17,7 @@ https://user-images.githubusercontent.com/33194443/189530706-5045b078-87ca-4609-
 
 # Requirements
 - onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
-- OpenCV 3.4.2 or Later
+- opencv-contrib-python 4.6.0.66 or Later
 - Tensorflow 2.10.0 (学習後にONNXファイルを再作成する場合のみ)
 - PyTorch 1.12.0 (学習後にONNXファイルを再作成する場合のみ)
 - tf2onnx 1.12.0 or Later (学習後にONNXファイルを再作成する場合のみ)
