@@ -151,5 +151,5 @@ FPS計測用のモジュールです。
 - hand-gesture-recognition-using-onnx: Katsuya Hyodo
 
 # License
-- hand-gesture-recognition-using-mediapipe is under [Apache v2 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
-- hand-gesture-recognition-using-onnx is under [Apache v2 license](LICENSE).
+- hand-gesture-recognition-using-mediapipe is under [Apache-2.0 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
+- hand-gesture-recognition-using-onnx is under [Apache-2.0 license](LICENSE).
