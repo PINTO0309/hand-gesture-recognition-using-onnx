@@ -1,4 +1,4 @@
-[Japanese/[English](https://github.com/Kazuhito00/hand-gesture-recognition-using-onnx/blob/main/README_EN.md)]
+[Japanese / [WIP] English]
 
 ---
 # [WIP] hand-gesture-recognition-using-onnx
@@ -10,15 +10,15 @@ https://user-images.githubusercontent.com/33194443/189530706-5045b078-87ca-4609-
 - サンプルプログラム
 - ハンドディテクションモデル(改造ONNX)
 - 手のひらランドマークディテクションモデル(改造ONNX)
-- ハンドサイン認識モデル(ONNX)
-- フィンガージェスチャー認識モデル(ONNX)
+- ハンドサイン認識モデル(改造ONNX)
+- フィンガージェスチャー認識モデル(改造ONNX)
 - ハンドサイン認識用学習データ、および、学習用ノートブック
 - フィンガージェスチャー認識用学習データ、および、学習用ノートブック
 
 # Requirements
 - onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
 - OpenCV 3.4.2 or Later
-- Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
+- Tensorflow 2.10.0 (学習後にONNXファイルを再作成する場合のみ)
 - PyTorch 1.12.0 (学習後にONNXファイルを再作成する場合のみ)
 - tf2onnx 1.12.0 or Later (学習後にONNXファイルを再作成する場合のみ)
 - simple-onnx-processing-tools 1.0.54 or Later (学習後にONNXファイルを再作成する場合のみ)
@@ -32,23 +32,35 @@ python app.py
 ```
 
 デモ実行時には、以下のオプションが指定可能です。
-* --device<br>カメラデバイス番号の指定 (デフォルト：0)
-* --width<br>カメラキャプチャ時の横幅 (デフォルト：640)
-* --height<br>カメラキャプチャ時の縦幅 (デフォルト：480)
-* --use_static_image_mode<br>MediaPipeの推論にstatic_image_modeを利用するか否か (デフォルト：未指定)
-* --min_detection_confidence<br>
-検出信頼値の閾値 (デフォルト：0.5)
-* --min_tracking_confidence<br>
-トラッキング信頼値の閾値 (デフォルト：0.5)
+```
+--device
+    カメラデバイス番号の指定 (デフォルト：0)
+
+--width
+    カメラキャプチャ時の横幅 (デフォルト：640)
+
+--height
+    カメラキャプチャ時の縦幅 (デフォルト：480)
+
+--use_static_image_mode
+    MediaPipeの推論にstatic_image_modeを利用するか否か (デフォルト：未指定)
+
+--min_detection_confidence
+    検出信頼値の閾値 (デフォルト：0.5)
+
+--min_tracking_confidence
+    トラッキング信頼値の閾値 (デフォルト：0.5)
+```
 
 # Directory
-<pre>
+```
 │  app.py
 │  keypoint_classification.ipynb
 │  point_history_classification.ipynb
 │
 ├─model
 │  ├─keypoint_classifier
+│  │  │  tflite_to_onnx.sh
 │  │  │  make_argmax.py
 │  │  │  keypoint.csv
 │  │  │  keypoint_classifier.hdf5
@@ -58,6 +70,7 @@ python app.py
 │  │  └─ keypoint_classifier_label.csv
 │  │
 │  └─point_history_classifier
+│      │  tflite_to_onnx.sh
 │      │  make_argmax.py
 │      │  point_history.csv
 │      │  point_history_classifier.hdf5
@@ -68,7 +81,7 @@ python app.py
 │
 └─utils
     └─cvfpscalc.py
-</pre>
+```
 ### app.py
 推論用のサンプルプログラムです。<br>また、ハンドサイン認識用の学習データ(キーポイント)、<br>
 フィンガージェスチャー認識用の学習データ(人差指の座標履歴)を収集することもできます。
@@ -82,23 +95,30 @@ python app.py
 ### model/keypoint_classifier
 ハンドサイン認識に関わるファイルを格納するディレクトリです。<br>
 以下のファイルが格納されます。
-- 学習用データ(keypoint.csv)
-- 学習済モデル(keypoint_classifier.tflite)
-- 学習済モデル(keypoint_classifier.onnx)
-- ラベルデータ(keypoint_classifier_label.csv)
-- 推論用クラス(keypoint_classifier.py)
+- tfliteのONNX変換スクリプト (tflite_to_onnx.sh)
+- ONNX部品生成プログラム (make_argmax.py)
+- 学習用データ (keypoint.csv)
+- 学習済モデル (keypoint_classifier.tflite)
+- 学習済モデル (keypoint_classifier.onnx)
+- ラベルデータ (keypoint_classifier_label.csv)
+- 推論用クラス (keypoint_classifier.py)
 
 ### model/point_history_classifier
 フィンガージェスチャー認識に関わるファイルを格納するディレクトリです。<br>
 以下のファイルが格納されます。
-- 学習用データ(point_history.csv)
-- 学習済モデル(point_history_classifier.tflite)
-- 学習済モデル(point_history_classifier.onnx)
-- ラベルデータ(point_history_classifier_label.csv)
-- 推論用クラス(point_history_classifier.py)
+- tfliteのONNX変換スクリプト (tflite_to_onnx.sh)
+- ONNX部品生成プログラム (make_argmax.py)
+- 学習用データ (point_history.csv)
+- 学習済モデル (point_history_classifier.tflite)
+- 学習済モデル (point_history_classifier.onnx)
+- ラベルデータ (point_history_classifier_label.csv)
+- 推論用クラス (point_history_classifier.py)
 
 ### utils/cvfpscalc.py
 FPS計測用のモジュールです。
+
+### utils/utils.py
+画像加工用の関数群です。
 
 # Training
 ハンドサイン認識、フィンガージェスチャー認識は、<br>学習データの追加、変更、モデルの再トレーニングが出来ます。
