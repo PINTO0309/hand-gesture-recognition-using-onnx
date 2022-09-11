@@ -162,3 +162,6 @@ FPS計測用のモジュールです。
 # License
 - hand-gesture-recognition-using-mediapipe is under [Apache-2.0 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
 - hand-gesture-recognition-using-onnx is under [Apache-2.0 license](LICENSE).
+
+# ToDo
+- DeepSort
