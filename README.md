@@ -19,6 +19,7 @@ https://user-images.githubusercontent.com/33194443/189493553-d54a2a62-4954-4d66-
 - onnxruntime 1.12.0 or onnxruntime-gpu 1.12.0
 - OpenCV 3.4.2 or Later
 - Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
+- PyTorch 1.12.0 (学習後にONNXファイルを再作成する場合のみ)
 - scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
 - matplotlib 3.3.2 or Later (学習時に混同行列を表示したい場合のみ)
 - simple-onnx-processing-tools
@@ -47,17 +48,21 @@ python app.py
 │
 ├─model
 │  ├─keypoint_classifier
+│  │  │  make_argmax.py
 │  │  │  keypoint.csv
 │  │  │  keypoint_classifier.hdf5
 │  │  │  keypoint_classifier.py
 │  │  │  keypoint_classifier.tflite
+│  │  │  keypoint_classifier.onnx
 │  │  └─ keypoint_classifier_label.csv
 │  │
 │  └─point_history_classifier
+│      │  make_argmax.py
 │      │  point_history.csv
 │      │  point_history_classifier.hdf5
 │      │  point_history_classifier.py
 │      │  point_history_classifier.tflite
+│      │  point_history_classifier.onnx
 │      └─ point_history_classifier_label.csv
 │
 └─utils
@@ -78,6 +83,7 @@ python app.py
 以下のファイルが格納されます。
 - 学習用データ(keypoint.csv)
 - 学習済モデル(keypoint_classifier.tflite)
+- 学習済モデル(keypoint_classifier.onnx)
 - ラベルデータ(keypoint_classifier_label.csv)
 - 推論用クラス(keypoint_classifier.py)
 
@@ -86,6 +92,7 @@ python app.py
 以下のファイルが格納されます。
 - 学習用データ(point_history.csv)
 - 学習済モデル(point_history_classifier.tflite)
+- 学習済モデル(point_history_classifier.onnx)
 - ラベルデータ(point_history_classifier_label.csv)
 - 推論用クラス(point_history_classifier.py)
 
