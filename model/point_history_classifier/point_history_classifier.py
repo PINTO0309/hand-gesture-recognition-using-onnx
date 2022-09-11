@@ -24,7 +24,6 @@ class PointHistoryClassifier(object):
             'CPUExecutionProvider',
         ],
         score_th=0.5,
-        invalid_value=0,
     ):
         """PointHistoryClassifier
 
@@ -67,8 +66,7 @@ class PointHistoryClassifier(object):
         self.output_names = [
             output.name for output in self.onnx_session.get_outputs()
         ]
-        self.score_th = score_th
-        self.invalid_value = invalid_value
+        self.score_th = np.asarray(score_th, dtype=np.float32)
 
 
     def __call__(
@@ -86,14 +84,14 @@ class PointHistoryClassifier(object):
         -------
         class_ids: np.ndarray
             int64[N]
-            Index of Finger gesture
+            ClassIDs of Finger gesture
         """
-        results = self.onnx_session.run(
+        class_ids = self.onnx_session.run(
             self.output_names,
-            {input_name: point_history for input_name in self.input_names},
-        )
-        max_scores, class_ids = results
-        invalid_idxs = max_scores < self.score_th
-        class_ids[invalid_idxs] = self.invalid_value
+            {
+                self.input_names[0]: point_history,
+                self.input_names[1]: self.score_th,
+            },
+        )[0]
 
         return class_ids

@@ -81,10 +81,11 @@ class KeyPointClassifier(object):
         -------
         class_ids: np.ndarray
             float32[N]
-            class_ids of Hand Signatures
+            ClassIDs of Hand Signatures
         """
         class_ids = self.onnx_session.run(
             self.output_names,
             {input_name: landmarks for input_name in self.input_names},
         )[0]
+
         return class_ids

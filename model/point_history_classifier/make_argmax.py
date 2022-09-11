@@ -10,10 +10,15 @@ from argparse import ArgumentParser
 class Model(nn.Module):
     def __init__(self):
         super(Model, self).__init__()
+        self.invalid_value = 0
 
-    def forward(self, scores):
-        max_values, max_indices = torch.max(scores, dim=1)
-        return max_values, max_indices
+    def forward(self, scores, score_threshold):
+        max_scores, class_ids = torch.max(scores, dim=1)
+
+        invalid_idxs = max_scores < score_threshold
+        class_ids[invalid_idxs] = self.invalid_value
+
+        return class_ids
 
 
 if __name__ == "__main__":
@@ -50,17 +55,17 @@ if __name__ == "__main__":
 
     onnx_file = f"{MODEL}.onnx"
     scores = torch.randn(BATCHES, CLASSES)
+    score_threshold = torch.tensor(0.5, dtype=torch.float32)
 
     torch.onnx.export(
         model,
-        args=(scores),
+        args=(scores, score_threshold),
         f=onnx_file,
         opset_version=OPSET,
-        input_names=['argmax_input'],
-        output_names=['max_scores', 'class_ids'],
+        input_names=['argmax_input', 'score_threshold'],
+        output_names=['class_ids'],
         dynamic_axes={
             'argmax_input' : {0: 'batch'},
-            'max_scores' : {0: 'batch'},
             'class_ids' : {0: 'batch'},
         },
     )
