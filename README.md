@@ -42,9 +42,6 @@ python app.py
 --height
     カメラキャプチャ時の縦幅 (デフォルト：480)
 
---use_static_image_mode
-    MediaPipeの推論にstatic_image_modeを利用するか否か (デフォルト：未指定)
-
 --min_detection_confidence
     検出信頼値の閾値 (デフォルト：0.5)
 
