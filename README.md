@@ -20,9 +20,10 @@ https://user-images.githubusercontent.com/33194443/189493553-d54a2a62-4954-4d66-
 - OpenCV 3.4.2 or Later
 - Tensorflow 2.10.0 (LSTMモデルのTFLiteを作成する場合のみ)
 - PyTorch 1.12.0 (学習後にONNXファイルを再作成する場合のみ)
+- tf2onnx 1.12.0 or Later (学習後にONNXファイルを再作成する場合のみ)
+- simple-onnx-processing-tools 1.0.54 or Later (学習後にONNXファイルを再作成する場合のみ)
 - scikit-learn 0.23.2 or Later (学習時に混同行列を表示したい場合のみ)
 - matplotlib 3.3.2 or Later (学習時に混同行列を表示したい場合のみ)
-- simple-onnx-processing-tools
 
 # Demo
 Webカメラを使ったデモの実行方法は以下です。
