@@ -231,13 +231,13 @@ def main():
                 y2 = rcy + half_h
                 text_x = max(x1, 10)
                 text_x = min(text_x, cap_width-120)
-                text_y = max(y1-15, 20)
+                text_y = max(y1-15, 45)
                 text_y = min(text_y, cap_height-20)
                 # [boxcount, rcx, rcy, x1, y1, x2, y2, height, degree]
                 not_rotate_rects.append([rcx, rcy, x1, y1, x2, y2, 0])
                 # 検出枠のサイズ WxH
-                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (128,128,128), 2, cv.LINE_AA)
-                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,128,255), 1, cv.LINE_AA)
+                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
+                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
                 # 検出枠の描画
                 cv.rectangle(debug_image, (x1,y1), (x2,y2), (0,128,255), 2, cv.LINE_AA)
                 # 検出領域の中心座標描画
@@ -284,9 +284,9 @@ def main():
                     text_x = max(x1, 10)
                     text_x = min(text_x, cap_width-120)
                     text_y = max(y1-40, 20)
-                    text_y = min(text_y, cap_height-20)
-                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (128,128,128), 2, cv.LINE_AA)
-                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,128,255), 1, cv.LINE_AA)
+                    text_y = min(text_y, cap_height-40)
+                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
+                    cv.putText(debug_image, f'{handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
 
                     # 相対座標・正規化座標への変換
                     """
