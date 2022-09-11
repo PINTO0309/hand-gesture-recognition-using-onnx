@@ -326,6 +326,20 @@ def main():
                         point_history.append([0, 0])
 
 
+                """2点間の距離算出
+                https://www.higashisalary.com/entry/numpy-linalg-norm
+                import numpy as np
+                a=np.array([1,2])
+                b=np.array([2,3])
+                distance=np.linalg.norm(b-a)
+                print(distance)
+                """
+
+                """複数点間の距離一括算出
+                https://teratail.com/questions/153138
+                """
+
+
                 # フィンガージェスチャー分類 - バッチ処理
                 finger_gesture_ids = []
                 pre_processed_point_history_list = np.asarray(pre_processed_point_history_list, dtype=np.float32)

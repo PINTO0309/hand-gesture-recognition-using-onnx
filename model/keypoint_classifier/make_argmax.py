@@ -13,7 +13,7 @@ class Model(nn.Module):
 
     def forward(self, scores):
         max_values, max_indices = torch.max(scores, dim=1)
-        return max_values, max_indices
+        return max_indices
 
 
 if __name__ == "__main__":
@@ -36,7 +36,7 @@ if __name__ == "__main__":
         '-c',
         '--classes',
         type=int,
-        default=4,
+        default=3,
         help='classes'
     )
     args = parser.parse_args()
@@ -57,10 +57,9 @@ if __name__ == "__main__":
         f=onnx_file,
         opset_version=OPSET,
         input_names=['argmax_input'],
-        output_names=['max_scores', 'class_ids'],
+        output_names=['class_ids'],
         dynamic_axes={
             'argmax_input' : {0: 'batch'},
-            'max_scores' : {0: 'batch'},
             'class_ids' : {0: 'batch'},
         },
     )

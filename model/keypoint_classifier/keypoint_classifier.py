@@ -12,13 +12,13 @@ class KeyPointClassifier(object):
         self,
         model_path: Optional[str] = 'model/keypoint_classifier/keypoint_classifier.onnx',
         providers: Optional[List] = [
-            (
-                'TensorrtExecutionProvider', {
-                    'trt_engine_cache_enable': True,
-                    'trt_engine_cache_path': '.',
-                    'trt_fp16_enable': True,
-                }
-            ),
+            # (
+            #     'TensorrtExecutionProvider', {
+            #         'trt_engine_cache_enable': True,
+            #         'trt_engine_cache_path': '.',
+            #         'trt_fp16_enable': True,
+            #     }
+            # ),
             'CUDAExecutionProvider',
             'CPUExecutionProvider',
         ],
@@ -79,13 +79,13 @@ class KeyPointClassifier(object):
 
         Returns
         -------
-        result_index: np.ndarray
+        class_ids: np.ndarray
             float32[N]
-            Index of Hand Signatures
+            class_ids of Hand Signatures
         """
         result = self.onnx_session.run(
             self.output_names,
             {input_name: landmarks for input_name in self.input_names},
         )[0]
-        result_index = np.argmax(result, axis=1, keepdims=False)
-        return result_index
+        class_ids = result
+        return class_ids

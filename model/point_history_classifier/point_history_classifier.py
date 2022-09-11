@@ -13,13 +13,13 @@ class PointHistoryClassifier(object):
         self,
         model_path: Optional[str] = 'model/point_history_classifier/point_history_classifier.onnx',
         providers: Optional[List] = [
-            (
-                'TensorrtExecutionProvider', {
-                    'trt_engine_cache_enable': True,
-                    'trt_engine_cache_path': '.',
-                    'trt_fp16_enable': True,
-                }
-            ),
+            # (
+            #     'TensorrtExecutionProvider', {
+            #         'trt_engine_cache_enable': True,
+            #         'trt_engine_cache_path': '.',
+            #         'trt_fp16_enable': True,
+            #     }
+            # ),
             'CUDAExecutionProvider',
             'CPUExecutionProvider',
         ],
@@ -84,7 +84,7 @@ class PointHistoryClassifier(object):
 
         Returns
         -------
-        max_indices: np.ndarray
+        class_ids: np.ndarray
             int64[N]
             Index of Finger gesture
         """
@@ -92,9 +92,8 @@ class PointHistoryClassifier(object):
             self.output_names,
             {input_name: point_history for input_name in self.input_names},
         )
-        max_scores, max_indices = results
-        # result_index = np.argmax(result, axis=1, keepdims=False)
+        max_scores, class_ids = results
         invalid_idxs = max_scores < self.score_th
-        max_indices[invalid_idxs] = self.invalid_value
+        class_ids[invalid_idxs] = self.invalid_value
 
-        return max_indices
+        return class_ids

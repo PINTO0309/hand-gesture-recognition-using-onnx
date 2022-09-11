@@ -1,5 +1,17 @@
 #!/bin/bash
 
+if [ $# -gt 1 ]; then
+    echo "The number of arguments specified is $#." 1>&2
+    echo "Be sure to specify 0 or 1 (Number of classes) argument. (default:4)" 1>&2
+    exit 1
+fi
+
+if [ $# -eq 0 ]; then
+    CLASSES=3
+else
+    CLASSES=$1
+fi
+
 python -m tf2onnx.convert \
 --opset 11 \
 --tflite keypoint_classifier.tflite \
@@ -20,6 +32,15 @@ sor4onnx \
 
 sor4onnx \
 --input_onnx_file_path keypoint_classifier.onnx \
---old_new "Identity" "output" \
+--old_new "Identity" "base_scores" \
 --mode outputs \
 --output_onnx_file_path keypoint_classifier.onnx
+
+python make_argmax.py --classes ${CLASSES}
+
+snc4onnx \
+-if keypoint_classifier.onnx argmax.onnx \
+-of keypoint_classifier.onnx \
+-sd base_scores argmax_input
+
+rm argmax.onnx
