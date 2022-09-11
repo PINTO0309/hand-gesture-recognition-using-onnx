@@ -45,11 +45,6 @@ def get_args():
         default=480,
     )
     parser.add_argument(
-        '-s',
-        '--use_static_image_mode',
-        action='store_true',
-    )
-    parser.add_argument(
         '-mdc',
         '--min_detection_confidence',
         help='min_detection_confidence',
@@ -84,7 +79,6 @@ def main():
     cap_width = args.width
     cap_height = args.height
 
-    use_static_image_mode = args.use_static_image_mode
     min_detection_confidence = args.min_detection_confidence
     min_tracking_confidence = args.min_tracking_confidence
 
