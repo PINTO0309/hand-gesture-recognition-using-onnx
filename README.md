@@ -4,12 +4,12 @@
 # [WIP] hand-gesture-recognition-using-onnx
 簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 
-https://user-images.githubusercontent.com/33194443/189484458-ad725190-bd5b-43da-aa46-704e0605f06e.mp4
+https://user-images.githubusercontent.com/33194443/189493553-d54a2a62-4954-4d66-95f7-d8efad57e49f.mp4
 
 本リポジトリは以下の内容を含みます。
 - サンプルプログラム
-- ハンドディテクションモデル(魔改造ONNX)
-- 手のひらランドマークディテクションモデル(魔改造ONNX)
+- ハンドディテクションモデル(改造ONNX)
+- 手のひらランドマークディテクションモデル(改造ONNX)
 - ハンドサイン認識モデル(ONNX)
 - フィンガージェスチャー認識モデル(ONNX)
 - ハンドサイン認識用学習データ、および、学習用ノートブック
