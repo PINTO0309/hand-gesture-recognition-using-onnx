@@ -83,9 +83,8 @@ class KeyPointClassifier(object):
             float32[N]
             class_ids of Hand Signatures
         """
-        result = self.onnx_session.run(
+        class_ids = self.onnx_session.run(
             self.output_names,
             {input_name: landmarks for input_name in self.input_names},
         )[0]
-        class_ids = result
         return class_ids
