@@ -45,8 +45,8 @@ python app.py
 --min_detection_confidence
     検出信頼値の閾値 (デフォルト：0.6)
 
---min_tracking_confidence
-    トラッキング信頼値の閾値 (デフォルト：0.5)
+--disable_image_flip
+    入力映像の左右反転を無効化
 ```
 
 # Directory

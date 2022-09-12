@@ -4,11 +4,9 @@ import csv
 import copy
 import argparse
 import itertools
-from typing import List
 from math import degrees
 from collections import Counter
 from collections import deque
-from collections import OrderedDict
 
 import cv2 as cv
 import numpy as np
@@ -19,7 +17,6 @@ from model import PalmDetection
 from model import HandLandmark
 from model import KeyPointClassifier
 from model import PointHistoryClassifier
-
 
 
 def get_args():
@@ -53,13 +50,6 @@ def get_args():
         default=0.6,
     )
     parser.add_argument(
-        '-mtc',
-        '--min_tracking_confidence',
-        help='min_tracking_confidence',
-        type=float,
-        default=0.5,
-    )
-    parser.add_argument(
         '-dif',
         '--disable_image_flip',
         help='disable image flip',
@@ -79,11 +69,7 @@ def main():
     cap_device = args.device
     cap_width = args.width
     cap_height = args.height
-
     min_detection_confidence = args.min_detection_confidence
-    min_tracking_confidence = args.min_tracking_confidence
-
-    use_brect = True
 
     lines_hand = [
         [0,1],[1,2],[2,3],[3,4],
@@ -192,7 +178,6 @@ def main():
         palm_trackid_box_x1y1s = {}
 
         if len(hands) > 0:
-            # Draw
             for hand in hands:
                 # hand: sqn_rr_size, rotation, sqn_rr_center_x, sqn_rr_center_y
                 sqn_rr_size = hand[0]
@@ -246,16 +231,49 @@ def main():
                 # [boxcount, rcx, rcy, x1, y1, x2, y2, height, degree]
                 not_rotate_rects.append([rcx, rcy, x1, y1, x2, y2, 0])
                 # 検出枠のサイズ WxH
-                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
-                cv.putText(debug_image, f'{y2-y1}x{x2-x1}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
+                cv.putText(
+                    debug_image,
+                    f'{y2-y1}x{x2-x1}',
+                    (text_x, text_y),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (0,0,0),
+                    2,
+                    cv.LINE_AA,
+                )
+                cv.putText(
+                    debug_image,
+                    f'{y2-y1}x{x2-x1}',
+                    (text_x, text_y),
+                    cv.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (59,255,255),
+                    1,
+                    cv.LINE_AA,
+                )
                 # 検出枠の描画
-                cv.rectangle(debug_image, (x1,y1), (x2,y2), (0,128,255), 2, cv.LINE_AA)
+                cv.rectangle(
+                    debug_image,
+                    (x1,y1),
+                    (x2,y2),
+                    (0,128,255),
+                    2,
+                    cv.LINE_AA,
+                )
                 # 検出領域の中心座標描画
-                cv.circle(debug_image, (rcx, rcy), 3, (0, 255, 255), -1)
-                # 手のひらトラッキング用手のひら中心座標最新履歴の保存
-                ### 1. 過去履歴の中から基準点との距離が一番近い中心座標を抽出
-                ### 2. 距離が100pxより離れている場合は新たな手のひらと認識させる
-                ### 3. 距離が100px以下の場合は該当のtrackidを割り当てて過去履歴の中心座標を上書きする
+                cv.circle(
+                    debug_image,
+                    (rcx, rcy),
+                    3,
+                    (0, 255, 255),
+                    -1,
+                )
+                """
+                手のひらトラッキング用手のひら中心座標最新履歴の保存
+                    1. 過去履歴の中から基準点との距離が一番近い中心座標を抽出
+                    2. 距離が100pxより離れている場合は新たな手のひらと認識させる
+                    3. 距離が100px以下の場合は該当のtrackidを割り当てて過去履歴の中心座標を上書きする
+                """
                 # 1. 過去履歴の中から基準点との距離が一番近い中心座標を抽出
                 base_point = np.asarray(
                     [rcx, rcy],
@@ -329,8 +347,26 @@ def main():
                     text_x = min(text_x, cap_width-120)
                     text_y = max(y1-70, 20)
                     text_y = min(text_y, cap_height-70)
-                    cv.putText(debug_image, f'trackid:{trackid} {handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
-                    cv.putText(debug_image, f'trackid:{trackid} {handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
+                    cv.putText(
+                        debug_image,
+                        f'trackid:{trackid} {handedness}',
+                        (text_x, text_y),
+                        cv.FONT_HERSHEY_SIMPLEX,
+                        0.8,
+                        (0,0,0),
+                        2,
+                        cv.LINE_AA,
+                    )
+                    cv.putText(
+                        debug_image,
+                        f'trackid:{trackid} {handedness}',
+                        (text_x, text_y),
+                        cv.FONT_HERSHEY_SIMPLEX,
+                        0.8,
+                        (59,255,255),
+                        1,
+                        cv.LINE_AA,
+                    )
 
                     # 相対座標・正規化座標への変換
                     """
@@ -350,7 +386,7 @@ def main():
                         :
                 }
                     ↓
-                pre_processed_point_history: List
+                pre_processed_point_histories: List
                 [
                     [rx, ry, rx, ry, rx, ry, rx, ry, ...],
                     [rx, ry, rx, ry, ...],
@@ -407,7 +443,6 @@ def main():
                 temp_trackid_x1y1s = {}
                 temp_pre_processed_point_history = []
                 for (trackid, x1y1), pre_processed_point_history in zip(palm_trackid_box_x1y1s.items(), pre_processed_point_histories):
-                    # x1, y1 = x1y1
                     point_history_len = len(pre_processed_point_history)
                     if point_history_len > 0 and point_history_len % (history_length * 2) == 0:
                         temp_trackid_x1y1s[trackid] = x1y1
@@ -430,8 +465,27 @@ def main():
                         text_y = max(y1-45, 20)
                         text_y = min(text_y, cap_height-45)
                         classifier_label = point_history_classifier_labels[most_common_fg_id[0][0]]
-                        cv.putText(debug_image, f'{classifier_label}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
-                        cv.putText(debug_image, f'{classifier_label}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
+                        # print(f'trackid: {trackid} [x1,y1]: [{x1},{y1}] finger_gesture_id: {classifier_label}')
+                        cv.putText(
+                            debug_image,
+                            f'{classifier_label}',
+                            (text_x, text_y),
+                            cv.FONT_HERSHEY_SIMPLEX,
+                            0.8,
+                            (0,0,0),
+                            2,
+                            cv.LINE_AA,
+                        )
+                        cv.putText(
+                            debug_image,
+                            f'{classifier_label}',
+                            (text_x, text_y),
+                            cv.FONT_HERSHEY_SIMPLEX,
+                            0.8,
+                            (59,255,255),
+                            1,
+                            cv.LINE_AA,
+                        )
 
             else:
                 point_history = {}

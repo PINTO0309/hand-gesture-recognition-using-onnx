@@ -17,13 +17,13 @@ class HandLandmark(object):
         model_path: Optional[str] = 'model/hand_landmark/hand_landmark_sparse_Nx3x224x224.onnx',
         class_score_th: Optional[float] = 0.50,
         providers: Optional[List] = [
-            (
-                'TensorrtExecutionProvider', {
-                    'trt_engine_cache_enable': True,
-                    'trt_engine_cache_path': '.',
-                    'trt_fp16_enable': True,
-                }
-            ),
+            # (
+            #     'TensorrtExecutionProvider', {
+            #         'trt_engine_cache_enable': True,
+            #         'trt_engine_cache_path': '.',
+            #         'trt_fp16_enable': True,
+            #     }
+            # ),
             'CUDAExecutionProvider',
             'CPUExecutionProvider',
         ],

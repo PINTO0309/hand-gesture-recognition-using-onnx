@@ -25,13 +25,13 @@ class PalmDetection(object):
         model_path: Optional[str] = 'model/palm_detection/palm_detection_full_inf_post_192x192.onnx',
         score_threshold: Optional[float] = 0.60,
         providers: Optional[List] = [
-            (
-                'TensorrtExecutionProvider', {
-                    'trt_engine_cache_enable': True,
-                    'trt_engine_cache_path': '.',
-                    'trt_fp16_enable': True,
-                }
-            ),
+            # (
+            #     'TensorrtExecutionProvider', {
+            #         'trt_engine_cache_enable': True,
+            #         'trt_engine_cache_path': '.',
+            #         'trt_fp16_enable': True,
+            #     }
+            # ),
             'CUDAExecutionProvider',
             'CPUExecutionProvider',
         ],
