@@ -141,6 +141,7 @@ def main():
     pre_point_history = {}
 
     # フィンガージェスチャー履歴 #################################################
+    gesture_history_length = 10
     finger_gesture_history = {}
 
     # 手のひらトラッキング用手のひら中心座標最新履歴 #################################
@@ -281,7 +282,7 @@ def main():
 
                 # 手のひらトラッキング用手のひら中心座標最新履歴の最新座標を更新 または 新規追加
                 palm_trackid_cxcy[new_trackid] = [rcx, rcy]
-                #
+                # バウンディングボックスの検出順序とtrackidの順序を整合
                 box_idx_palm_trackids.append(new_trackid)
                 # Debug ===============================================================
 
@@ -323,8 +324,8 @@ def main():
                     _, _, x1, y1, _, _, _ = not_rotate_rect
                     text_x = max(x1, 10)
                     text_x = min(text_x, cap_width-120)
-                    text_y = max(y1-40, 20)
-                    text_y = min(text_y, cap_height-40)
+                    text_y = max(y1-70, 20)
+                    text_y = min(text_y, cap_height-70)
                     cv.putText(debug_image, f'trackid:{trackid} {handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
                     cv.putText(debug_image, f'trackid:{trackid} {handedness}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
 
@@ -337,38 +338,38 @@ def main():
                     )
                     pre_processed_landmark_list.append(pre_processed_landmark)
 
-                    """
-                    point_history: dict
-                    {
-                        int(trackid1): [[x, y],[x, y],[x, y],[x, y], ...],
-                        int(trackid2): [[x, y],[x, y], ...],
-                        int(trackid3): [[x, y],[x, y],[x, y], ...],
-                            :
-                    }
-                        ↓
-                    pre_processed_point_history: List
-                    [
-                        [rx, ry, rx, ry, rx, ry, rx, ry, ...],
-                        [rx, ry, rx, ry, ...],
-                        [rx, ry, rx, ry, rx, ry, ...],
-                            :
-                    ]
-                    """
-                    pre_processed_point_history = pre_process_point_history(
-                        image_width=debug_image.shape[1],
-                        image_height=debug_image.shape[0],
-                        point_history=point_history,
-                    )
-                    pre_processed_point_history_list.append(pre_processed_point_history)
+                """
+                point_history: dict
+                {
+                    int(trackid1): [[x, y],[x, y],[x, y],[x, y], ...],
+                    int(trackid2): [[x, y],[x, y], ...],
+                    int(trackid3): [[x, y],[x, y],[x, y], ...],
+                        :
+                }
+                    ↓
+                pre_processed_point_history: List
+                [
+                    [rx, ry, rx, ry, rx, ry, rx, ry, ...],
+                    [rx, ry, rx, ry, ...],
+                    [rx, ry, rx, ry, rx, ry, ...],
+                        :
+                ]
+                """
+                # 人差し指軌跡を相対座標へ変換
+                pre_processed_point_history_list = pre_process_point_history(
+                    image_width=debug_image.shape[1],
+                    image_height=debug_image.shape[0],
+                    point_history=point_history,
+                )
 
-                    # 学習データ保存
-                    logging_csv(
-                        number,
-                        mode,
-                        trackid,
-                        pre_processed_landmark,
-                        pre_processed_point_history,
-                    )
+                # 学習データ保存
+                logging_csv(
+                    number,
+                    mode,
+                    trackid,
+                    pre_processed_landmark,
+                    pre_processed_point_history_list,
+                )
 
                 # ハンドサイン分類 - バッチ処理
                 hand_sign_ids = keypoint_classifier(
@@ -381,11 +382,13 @@ def main():
                     else:
                         point_history[trackid].append([0, 0])
 
-                # 人差し指の軌跡が表示上に残り続けるのを割けるため
-                # トラッキング対象外になった(画角から外れた)手のひらがある場合は人差指XY座標の履歴をクリアする
-                # 今回の全ての軌跡座標と前回の全ての軌跡座標が完全に一致したtrackidの履歴情報は変化なしと断定して履歴から削除する
-                # point_history: 最新の軌跡16点
-                # pre_point_history: 前回の軌跡16点
+                """
+                人差し指の軌跡が表示上に残り続けるのを割けるため
+                トラッキング対象外になった(画角から外れた)手のひらがある場合は人差指XY座標の履歴をクリアする
+                今回の全ての軌跡座標と前回の全ての軌跡座標が完全に一致したtrackidの履歴情報は変化なしと断定して履歴から削除する
+                point_history: 最新の軌跡16点
+                pre_point_history: 前回の軌跡16点
+                """
                 if len(pre_point_history) > 0:
                     temp_point_history = copy.deepcopy(point_history)
                     for track_id, points in temp_point_history.items():
@@ -395,45 +398,39 @@ def main():
                                 _ = point_history.pop(track_id, None)
                 pre_point_history = copy.deepcopy(point_history)
 
+                # フィンガージェスチャー分類 - バッチ処理
+                finger_gesture_ids = None
+                temp_trackids = []
+                temp_pre_processed_point_history = []
+                for box_idx_palm_trackid, pre_processed_point_history in zip(box_idx_palm_trackids, pre_processed_point_history_list):
+                    point_history_len = len(pre_processed_point_history)
+                    if point_history_len > 0 and point_history_len % (history_length * 2) == 0:
+                        temp_trackids.append(box_idx_palm_trackid)
+                        temp_pre_processed_point_history.append(pre_processed_point_history)
+                if len(temp_pre_processed_point_history) > 0:
+                    finger_gesture_ids = point_history_classifier(
+                        temp_pre_processed_point_history,
+                    )
 
+                # 直近検出の中で最多のジェスチャーIDを算出
+                if finger_gesture_ids is not None:
+                    for box_idx_palm_trackid, finger_gesture_id, not_rotate_rect in zip(box_idx_palm_trackids, finger_gesture_ids, not_rotate_rects):
+                        hand_idx_str = str(box_idx_palm_trackid)
+                        finger_gesture_history.setdefault(str(box_idx_palm_trackid), deque(maxlen=gesture_history_length))
+                        finger_gesture_history[hand_idx_str].append(int(finger_gesture_id))
+                        most_common_fg_id = Counter(finger_gesture_history[hand_idx_str]).most_common()
+                        _, _, x1, y1, _, _, _ = not_rotate_rect
+                        text_x = max(x1, 10)
+                        text_x = min(text_x, cap_width-120)
+                        text_y = max(y1-45, 20)
+                        text_y = min(text_y, cap_height-45)
+                        cv.putText(debug_image, f'{point_history_classifier_labels[most_common_fg_id[0][0]]}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (0,0,0), 2, cv.LINE_AA)
+                        cv.putText(debug_image, f'{point_history_classifier_labels[most_common_fg_id[0][0]]}', (text_x, text_y), cv.FONT_HERSHEY_SIMPLEX, 0.8, (59,255,255), 1, cv.LINE_AA)
 
-                # # フィンガージェスチャー分類 - バッチ処理
-                # finger_gesture_ids = []
-                # pre_processed_point_history_list = np.asarray(pre_processed_point_history_list, dtype=np.float32)
-                # """
-                # hands = 2
-                # pre_processed_point_history_list.shape: (2, 32)
-                # """
-                # print(f'pre_processed_point_history_list.shape: {pre_processed_point_history_list.shape}')
-                # point_history_len = pre_processed_point_history_list.size
-                # if point_history_len % (history_length * 2) == 0:
-                #     finger_gesture_ids = point_history_classifier(
-                #         pre_processed_point_history_list,
-                #     )
-                #     # print(f'finger_gesture_ids.shape: {finger_gesture_ids.shape}')
-
-                # # 直近検出の中で最多のジェスチャーIDを算出
-                # for hand_idx, finger_gesture_id in enumerate(finger_gesture_ids):
-                #     hand_idx_str = str(hand_idx)
-                #     finger_gesture_history.setdefault(str(hand_idx), deque(maxlen=history_length))
-                #     finger_gesture_history[hand_idx_str].append(int(finger_gesture_id))
-                #     most_common_fg_id = Counter(finger_gesture_history[hand_idx_str]).most_common()
-                #     print(f'hand_idx: {hand_idx} point_history_classifier_labels: {point_history_classifier_labels[most_common_fg_id[0][0]]}')
-
-                #     # # 描画
-                #     # debug_image = draw_info_text(
-                #     #     debug_image,
-                #     #     brect,
-                #     #     handedness,
-                #     #     keypoint_classifier_labels[hand_sign_id],
-                #     #     point_history_classifier_labels[most_common_fg_id[0][0]],
-                #     # )
             else:
-                # point_history.append([0, 0])
                 point_history = {}
 
         else:
-            # point_history.append([0, 0])
             point_history = {}
 
         debug_image = draw_point_history(debug_image, point_history)
@@ -556,7 +553,8 @@ def logging_csv(number, mode, trackid, landmark_list, point_history_list):
         csv_path = 'model/point_history_classifier/point_history.csv'
         with open(csv_path, 'a', newline="") as f:
             writer = csv.writer(f)
-            writer.writerow([number, trackid, *point_history_list])
+            for point_history in point_history_list:
+                writer.writerow([number, trackid, *point_history])
 
 
 def draw_info_text(
