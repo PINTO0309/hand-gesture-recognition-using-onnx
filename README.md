@@ -4,7 +4,7 @@
 # [WIP] hand-gesture-recognition-using-onnx
 簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 
-https://user-images.githubusercontent.com/33194443/189530706-5045b078-87ca-4609-a0d8-98c208069f98.mp4
+https://user-images.githubusercontent.com/33194443/189589988-2ffaebfc-debc-4d59-8067-23c828839caf.mp4
 
 本リポジトリは以下の内容を含みます。
 - サンプルプログラム
