@@ -55,7 +55,7 @@ def get_args():
         '-mtc',
         '--min_tracking_confidence',
         help='min_tracking_confidence',
-        type=int,
+        type=float,
         default=0.5,
     )
     parser.add_argument(
