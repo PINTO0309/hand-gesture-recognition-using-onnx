@@ -51,9 +51,12 @@ python app.py
 
 # Directory
 ```
+.
 │  app.py
 │  keypoint_classification.ipynb
 │  point_history_classification.ipynb
+│  requirements.txt
+│  README.md
 │
 ├─model
 │  ├─keypoint_classifier
@@ -77,7 +80,8 @@ python app.py
 │      └─ point_history_classifier_label.csv
 │
 └─utils
-    └─cvfpscalc.py
+    │  cvfpscalc.py
+    └─ utils.py
 ```
 ### app.py
 推論用のサンプルプログラムです。<br>また、ハンドサイン認識用の学習データ(キーポイント)、<br>
