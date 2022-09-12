@@ -2,8 +2,7 @@
 
 ---
 # hand-gesture-recognition-using-onnx
-[Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe) を引用させていただき、全てONNXにリプレースしたリポジトリです。<br>
-簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
+[Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe) を引用させていただき、全てONNXにリプレースしたリポジトリです。簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 
 https://user-images.githubusercontent.com/33194443/189632510-1823cd54-bc36-4889-ac14-adc16deba9b8.mp4
 
