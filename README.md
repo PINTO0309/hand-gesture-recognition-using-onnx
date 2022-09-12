@@ -175,6 +175,7 @@ FPS計測用のモジュールです。
 # Reference
 - [Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
 - [PINTO0309/simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
+- https://github.com/PINTO0309/PINTO_model_zoo/tree/main/033_Hand_Detection_and_Tracking
 
 # Acknowledgments
 - hand-gesture-recognition-using-mediapipe: 高橋かずひと(https://twitter.com/KzhtTkhs)
