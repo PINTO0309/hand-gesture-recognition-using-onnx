@@ -143,6 +143,9 @@ def main():
     mode = 0
     wh_ratio = cap_width / cap_height
 
+    auto = False
+    prev_number = -1
+
     while True:
         fps = cvFpsCalc.get()
 
@@ -150,7 +153,7 @@ def main():
         key = cv.waitKey(1)
         if key == 27:  # ESC
             break
-        number, mode = select_mode(key, mode)
+        number, mode, auto, prev_number = select_mode(key, mode, auto, prev_number)
 
         # カメラキャプチャ #####################################################
         ret, image = cap.read()
@@ -494,7 +497,7 @@ def main():
             point_history = {}
 
         debug_image = draw_point_history(debug_image, point_history)
-        debug_image = draw_info(debug_image, fps, mode, number)
+        debug_image = draw_info(debug_image, fps, mode, number, auto)
 
         # 画面反映 #############################################################
         cv.imshow('Hand Gesture Recognition', debug_image)
@@ -507,17 +510,26 @@ def main():
     cv.destroyAllWindows()
 
 
-def select_mode(key, mode):
+def select_mode(key, mode, auto=False, prev_number=-1):
     number = -1
     if 48 <= key <= 57:  # 0 ~ 9
         number = key - 48
+        prev_number = number
     if key == 110:  # n
         mode = 0
     if key == 107:  # k
         mode = 1
     if key == 104:  # h
         mode = 2
-    return number, mode
+    if key == 97:   # a
+        auto = not auto
+    if auto == True:
+        if prev_number != -1:
+            number = prev_number
+    else:
+        prev_number = -1
+
+    return number, mode, auto, prev_number
 
 
 def pre_process_landmark(landmark_list):
@@ -672,7 +684,7 @@ def draw_point_history(image, point_history):
     return image
 
 
-def draw_info(image, fps, mode, number):
+def draw_info(image, fps, mode, number, auto):
     cv.putText(
         image,
         f'FPS:{str(fps)}',
@@ -717,6 +729,16 @@ def draw_info(image, fps, mode, number):
                 1,
                 cv.LINE_AA,
             )
+    cv.putText(
+        image,
+        f'AUTO:{str(auto)}',
+        (10, 130),
+        cv.FONT_HERSHEY_SIMPLEX,
+        0.6,
+        (255, 255, 255),
+        1,
+        cv.LINE_AA,
+    )
     return image
 
 
