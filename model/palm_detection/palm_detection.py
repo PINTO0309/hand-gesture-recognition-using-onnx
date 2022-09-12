@@ -23,7 +23,7 @@ class PalmDetection(object):
     def __init__(
         self,
         model_path: Optional[str] = 'model/palm_detection/palm_detection_full_inf_post_192x192.onnx',
-        class_score_th: Optional[float] = 0.60,
+        score_threshold: Optional[float] = 0.60,
         providers: Optional[List] = [
             (
                 'TensorrtExecutionProvider', {
@@ -43,8 +43,8 @@ class PalmDetection(object):
         model_path: Optional[str]
             ONNX file path for Palm Detection
 
-        class_score_th: Optional[float]
-            Score threshold. Default: 0.60
+        score_threshold: Optional[float]
+            Detection score threshold. Default: 0.60
 
         providers: Optional[List]
             Name of onnx execution providers
@@ -62,7 +62,7 @@ class PalmDetection(object):
             ]
         """
         # Threshold
-        self.class_score_th = class_score_th
+        self.score_threshold = score_threshold
 
         # Model loading
         session_option = onnxruntime.SessionOptions()
@@ -205,7 +205,7 @@ class PalmDetection(object):
         image_width = image.shape[1]
 
         hands = []
-        keep = boxes[:, 0] > self.class_score_th # pd_score > self.class_score_th
+        keep = boxes[:, 0] > self.score_threshold # pd_score > self.score_threshold
         boxes = boxes[keep, :]
 
         for box in boxes:

@@ -49,7 +49,7 @@ def get_args():
         '--min_detection_confidence',
         help='min_detection_confidence',
         type=float,
-        default=0.7,
+        default=0.6,
     )
     parser.add_argument(
         '-mtc',
@@ -106,7 +106,7 @@ def main():
     )
 
     # モデルロード #############################################################
-    palm_detection = PalmDetection()
+    palm_detection = PalmDetection(score_threshold=min_detection_confidence)
     hand_landmark = HandLandmark()
 
     keypoint_classifier = KeyPointClassifier()

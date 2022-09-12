@@ -43,7 +43,7 @@ python app.py
     カメラキャプチャ時の縦幅 (デフォルト：480)
 
 --min_detection_confidence
-    検出信頼値の閾値 (デフォルト：0.5)
+    検出信頼値の閾値 (デフォルト：0.6)
 
 --min_tracking_confidence
     トラッキング信頼値の閾値 (デフォルト：0.5)
