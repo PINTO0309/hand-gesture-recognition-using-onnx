@@ -2,6 +2,7 @@
 
 ---
 # [WIP] hand-gesture-recognition-using-onnx
+[Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe) を引用させていただき、全てONNXにリプレースしたリポジトリです。<br>
 簡易なMLPでハンドサインとフィンガージェスチャーを認識するサンプルプログラムです。
 
 https://user-images.githubusercontent.com/33194443/189632510-1823cd54-bc36-4889-ac14-adc16deba9b8.mp4
@@ -129,7 +130,7 @@ FPS計測用のモジュールです。
 「k」を押すと、キーポイントの保存するモードになります（「MODE:Logging Key Point」と表示される）<br>
 <img src="https://user-images.githubusercontent.com/37477845/102235423-aa6cb680-3f35-11eb-8ebd-5d823e211447.jpg" width="60%"><br><br>
 「0」～「9」を押すと「model/keypoint_classifier/keypoint.csv」に以下のようにキーポイントが追記されます。<br>
-1列目：押下した数字(クラスIDとして使用)、2列目以降：キーポイント座標<br>
+1列目：押下した数字(クラスIDとして使用)、2列目：trackid、3列目以降：キーポイント座標<br>
 <img src="https://user-images.githubusercontent.com/37477845/102345725-28d26280-3fe1-11eb-9eeb-8c938e3f625b.png" width="80%"><br><br>
 キーポイント座標は以下の前処理を④まで実施したものを保存します。<br>
 <img src="https://user-images.githubusercontent.com/37477845/102242918-ed328c80-3f3d-11eb-907c-61ba05678d54.png" width="80%">
@@ -151,7 +152,7 @@ FPS計測用のモジュールです。
 「h」を押すと、指先座標の履歴を保存するモードになります（「MODE:Logging Point History」と表示される）<br>
 <img src="https://user-images.githubusercontent.com/37477845/102249074-4d78fc80-3f45-11eb-9c1b-3eb975798871.jpg" width="60%"><br><br>
 「0」～「9」を押すと「model/point_history_classifier/point_history.csv」に以下のようにキーポイントが追記されます。<br>
-1列目：押下した数字(クラスIDとして使用)、2列目以降：座標履歴<br>
+1列目：押下した数字(クラスIDとして使用)、2列目：trackid、3列目以降：座標履歴<br>
 <img src="https://user-images.githubusercontent.com/37477845/102345850-54ede380-3fe1-11eb-8d04-88e351445898.png" width="80%"><br><br>
 キーポイント座標は以下の前処理を④まで実施したものを保存します。<br>
 <img src="https://user-images.githubusercontent.com/37477845/102244148-49e27700-3f3f-11eb-82e2-fc7de42b30fc.png" width="80%"><br><br>
@@ -176,13 +177,14 @@ FPS計測用のモジュールです。
 - [Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
 - [PINTO0309/simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
 
-# Author
+# Acknowledgments
 - hand-gesture-recognition-using-mediapipe: 高橋かずひと(https://twitter.com/KzhtTkhs)
-- hand-gesture-recognition-using-onnx: Katsuya Hyodo
-
-# License
 - hand-gesture-recognition-using-mediapipe is under [Apache-2.0 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
+
+# Author
+- hand-gesture-recognition-using-onnx: Katsuya Hyodo
 - hand-gesture-recognition-using-onnx is under [Apache-2.0 license](LICENSE).
 
 # ToDo
-- DeepSort
+- [ ] 変数とループの整理
+- [ ] CSVロギングの見直し
