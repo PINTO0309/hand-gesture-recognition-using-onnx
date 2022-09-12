@@ -189,7 +189,7 @@ def main():
         if len(hands) == 0:
             palm_trackid_cxcy = {}
         # トラッキング用手のひら中心座標最新履歴とバウンディングボックスの検出順序紐づけリスト
-        box_x1y1x2y2_palm_trackids = []
+        palm_trackid_box_x1y1s = {}
 
         if len(hands) > 0:
             # Draw
@@ -284,7 +284,8 @@ def main():
                 # 手のひらトラッキング用手のひら中心座標最新履歴の最新座標を更新 または 新規追加
                 palm_trackid_cxcy[new_trackid] = [rcx, rcy]
                 # バウンディングボックスの検出順序とtrackidの順序を整合
-                box_x1y1x2y2_palm_trackids.append([x1, y1, x2, y2, new_trackid])
+                # box_x1y1x2y2_palm_trackids.append([x1, y1, x2, y2, new_trackid])
+                palm_trackid_box_x1y1s[new_trackid] = [x1, y1]
                 # Debug ===============================================================
 
         # ============================================================= HandLandmark
@@ -300,10 +301,10 @@ def main():
                 # Draw
                 pre_processed_landmarks = []
                 pre_processed_point_histories = []
-                for box_x1y1x2y2_palm_trackid, landmark, rotated_image_size_leftright, not_rotate_rect in \
-                    zip(box_x1y1x2y2_palm_trackids, hand_landmarks, rotated_image_size_leftrights, not_rotate_rects):
+                for (trackid, x1y1), landmark, rotated_image_size_leftright, not_rotate_rect in \
+                    zip(palm_trackid_box_x1y1s.items(), hand_landmarks, rotated_image_size_leftrights, not_rotate_rects):
 
-                    x1, y1, x2, y2, trackid = box_x1y1x2y2_palm_trackid
+                    x1, y1 = x1y1
                     rotated_image_width, _, left_hand_0_or_right_hand_1 = rotated_image_size_leftright
                     thick_coef = rotated_image_width / 400
                     lines = np.asarray(
@@ -377,8 +378,8 @@ def main():
                 hand_sign_ids = keypoint_classifier(
                     np.asarray(pre_processed_landmarks, dtype=np.float32)
                 )
-                for box_x1y1x2y2_palm_trackid, landmark, hand_sign_id in zip(box_x1y1x2y2_palm_trackids, hand_landmarks, hand_sign_ids):
-                    x1, y1, x2, y2, trackid = box_x1y1x2y2_palm_trackid
+                for (trackid, x1y1), landmark, hand_sign_id in zip(palm_trackid_box_x1y1s.items(), hand_landmarks, hand_sign_ids):
+                    x1, y1 = x1y1
                     point_history.setdefault(trackid, deque(maxlen=history_length))
                     if hand_sign_id == 2:  # 指差しサイン
                         point_history[trackid].append(list(landmark[8])) # 人差指座標
@@ -403,13 +404,13 @@ def main():
 
                 # フィンガージェスチャー分類 - バッチ処理
                 finger_gesture_ids = None
-                temp_trackids = []
+                temp_trackid_x1y1s = {}
                 temp_pre_processed_point_history = []
-                for box_x1y1x2y2_palm_trackid, pre_processed_point_history in zip(box_x1y1x2y2_palm_trackids, pre_processed_point_histories):
-                    x1, y1, x2, y2, trackid = box_x1y1x2y2_palm_trackid
+                for (trackid, x1y1), pre_processed_point_history in zip(palm_trackid_box_x1y1s.items(), pre_processed_point_histories):
+                    # x1, y1 = x1y1
                     point_history_len = len(pre_processed_point_history)
                     if point_history_len > 0 and point_history_len % (history_length * 2) == 0:
-                        temp_trackids.append(trackid)
+                        temp_trackid_x1y1s[trackid] = x1y1
                         temp_pre_processed_point_history.append(pre_processed_point_history)
                 if len(temp_pre_processed_point_history) > 0:
                     finger_gesture_ids = point_history_classifier(
@@ -418,8 +419,8 @@ def main():
 
                 # 直近検出の中で最多のジェスチャーIDを算出
                 if finger_gesture_ids is not None:
-                    for box_x1y1x2y2_palm_trackid, finger_gesture_id in zip(box_x1y1x2y2_palm_trackids, finger_gesture_ids):
-                        x1, y1, x2, y2, trackid = box_x1y1x2y2_palm_trackid
+                    for (trackid, x1y1), finger_gesture_id in zip(temp_trackid_x1y1s.items(), finger_gesture_ids):
+                        x1, y1 = x1y1
                         trackid_str = str(trackid)
                         finger_gesture_history.setdefault(trackid_str, deque(maxlen=gesture_history_length))
                         finger_gesture_history[trackid_str].append(int(finger_gesture_id))
