@@ -174,16 +174,19 @@ FPS計測用のモジュールです。
 
 # Reference
 - [Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
+- [geaxgx/depthai_hand_tracker](https://github.com/geaxgx/depthai_hand_tracker)
 - [PINTO0309/simple-onnx-processing-tools](https://github.com/PINTO0309/simple-onnx-processing-tools)
 - https://github.com/PINTO0309/PINTO_model_zoo/tree/main/033_Hand_Detection_and_Tracking
 
 # Acknowledgments
-- hand-gesture-recognition-using-mediapipe: 高橋かずひと(https://twitter.com/KzhtTkhs)
-- hand-gesture-recognition-using-mediapipe is under [Apache-2.0 license](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE).
+- hand-gesture-recognition-using-mediapipe: 高橋かずひと (https://twitter.com/KzhtTkhs)
+  - [Apache-2.0 License](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe/blob/main/LICENSE)
+- depthai_hand_tracker: geaxgx (https://github.com/geaxgx/depthai_hand_tracker)
+  - [MIT License](https://github.com/geaxgx/depthai_hand_tracker/blob/main/LICENSE.txt)
 
 # Author
 - hand-gesture-recognition-using-onnx: Katsuya Hyodo
-- hand-gesture-recognition-using-onnx is under [Apache-2.0 license](LICENSE).
+  - [Apache-2.0 License](LICENSE)
 
 # ToDo
 - [ ] 変数とループの整理
