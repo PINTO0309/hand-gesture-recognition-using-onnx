@@ -189,6 +189,7 @@ FPS計測用のモジュールです。
   - [Apache-2.0 License](LICENSE)
 
 # ToDo
+- [x] LSTM ONNX
 - [ ] 変数とループの整理
 - [ ] CSVロギングの見直し
 - [ ] DeepSort
