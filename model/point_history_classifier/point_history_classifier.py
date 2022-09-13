@@ -11,7 +11,7 @@ from typing import (
 class PointHistoryClassifier(object):
     def __init__(
         self,
-        model_path: Optional[str] = 'model/point_history_classifier/point_history_classifier.onnx',
+        model_path: Optional[str] = 'model/point_history_classifier/point_history_classifier_lstm.onnx',
         providers: Optional[List] = [
             # (
             #     'TensorrtExecutionProvider', {
