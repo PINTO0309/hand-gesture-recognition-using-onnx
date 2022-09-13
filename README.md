@@ -190,6 +190,7 @@ FPS計測用のモジュールです。
 
 # ToDo
 - [x] LSTM ONNX
+- [ ] BPF (body_pre_focusing) の実装
 - [ ] 変数とループの整理
 - [ ] CSVロギングの見直し
 - [ ] DeepSort
