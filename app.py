@@ -29,6 +29,12 @@ def get_args():
         default=0,
     )
     parser.add_argument(
+        '-im',
+        '--image',
+        type=str,
+        default='',
+    )
+    parser.add_argument(
         '-wi',
         '--width',
         help='cap width',
@@ -66,7 +72,10 @@ def main():
     # 引数解析 #################################################################
     args = get_args()
 
-    cap_device = args.device
+    if not args.image:
+        cap_device = args.device
+    else:
+        cap_device = args.image
     cap_width = args.width
     cap_height = args.height
     min_detection_confidence = args.min_detection_confidence
@@ -145,12 +154,13 @@ def main():
 
     auto = False
     prev_number = -1
+    image = None
 
     while True:
         fps = cvFpsCalc.get()
 
         # キー処理(ESC：終了) #################################################
-        key = cv.waitKey(1)
+        key = cv.waitKey(1) if not args.image else cv.waitKey(0) if image is not None and args.image else cv.waitKey(1)
         if key == 27:  # ESC
             break
         number, mode, auto, prev_number = select_mode(key, mode, auto, prev_number)
