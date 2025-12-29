@@ -225,7 +225,7 @@ def main():
             for rect in rects:
                 # 回転考慮の領域の描画, 赤色の枠
                 rects_tuple = ((rect[0], rect[1]), (rect[2], rect[3]), rect[4])
-                box = cv.boxPoints(rects_tuple).astype(np.int0)
+                box = cv.boxPoints(rects_tuple).astype(np.intp)
                 cv.drawContours(debug_image, [box], 0,(0,0,255), 2, cv.LINE_AA)
 
                 # 回転非考慮の領域の描画, オレンジ色の枠
