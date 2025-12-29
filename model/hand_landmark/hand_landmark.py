@@ -256,6 +256,9 @@ class HandLandmark(object):
         xyz_x21s = xyz_x21s[keep, :]
         hand_scores = hand_scores[keep, :]
         left_hand_0_or_right_hand_1s = left_hand_0_or_right_hand_1s[keep, :]
+        resize_scales_224x224 = resize_scales_224x224[keep, :]
+        half_pad_sizes_224x224 = half_pad_sizes_224x224[keep, :]
+        rects = rects[keep, :]
         resized_images = [i for (i, k) in zip(resized_images, keep) if k == True]
 
         for resized_image, resize_scale_224x224, half_pad_size_224x224, rect, xyz_x21, left_hand_0_or_right_hand_1 in \
@@ -325,6 +328,6 @@ class HandLandmark(object):
             hand_landmarks[..., 0] = hand_landmarks[..., 0] + rcx - roatated_hand_half_width
             hand_landmarks[..., 1] = hand_landmarks[..., 1] + rcy - roatated_hand_half_height
             extracted_hands.append(hand_landmarks)
-            rotated_image_size_leftrights.append([rotated_image_width, rotated_image_height, left_hand_0_or_right_hand_1])
+            rotated_image_size_leftrights.append([rotated_image_width, rotated_image_height, float(left_hand_0_or_right_hand_1)])
 
         return np.asarray(extracted_hands, dtype=np.int32), np.asarray(rotated_image_size_leftrights)
