@@ -1,4 +1,4 @@
-[Japanese / [WIP] English]
+[[Japanese](./README.md) / English]
 
 ---
 # hand-gesture-recognition-using-onnx
